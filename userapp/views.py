@@ -11,7 +11,9 @@ from rest_framework.authtoken.models import Token
 from rest_framework_simplejwt.authentication import JWTAuthentication  
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from .decorators import check_employee
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.decorators import action
+from rest_framework.generics import ListAPIView,GenericAPIView
 
 #jwt based authentication
 
@@ -120,7 +122,6 @@ def index(request):
     return Response(userdetails)
 
 
-
 #signals used
 class Personviewset(ModelViewSet):
     queryset=Peoples.objects.all()
@@ -145,3 +146,25 @@ class Personviewset(ModelViewSet):
         except Peoples.DoesNotExist:
             return Response({"error":"does not exist"},status=404)
 
+
+#pagination in api
+class setPagination(PageNumberPagination):
+    page_size=2
+class paginationAPI(ListAPIView):
+    queryset=Peoples.objects.all()
+    serializer_class=PersonSerializer
+    pagination_class=setPagination
+
+
+#patch used in genericview
+
+class Apipatchview(GenericAPIView):
+    queryset=Peoples.objects.all()
+    serializer_class=PersonSerializer
+    def patch(self,request,id):
+        data=request.data
+        obj=Person.objects.get(id=id)
+        serializer=PersonSerializer(obj,data=data,partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)

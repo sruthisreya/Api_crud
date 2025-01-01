@@ -144,6 +144,15 @@ REST_FRAMEWORK = {
 #     ),
 # }
 
+
+
+
+#pagination
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 100
+}
+
 from datetime import timedelta
 
 SIMPLE_JWT={
